@@ -4,6 +4,7 @@
 #include "lcd12864.h"
 #include "beep.h"
 #include "backlight.h"
+#include "calender.h"
 
 #include "delay.h"
 
@@ -296,8 +297,16 @@ unsigned char MainScreen(unsigned char key_up, unsigned char key_down, unsigned 
 		g_sec = read_clock(0x81);
 		update();
 		Backlight_auto_ctrl();
-	}
+	}	
     return 0;
+}
+unsigned char MainScreenCalender(unsigned char key_up, unsigned char key_down, unsigned char key_enter)
+{
+	LCD_EnableGraphics();
+	LCD_ClearGraphics();
+	show_calender(2000+(yy/16)*10+(yy%16),mo,(dd/16)*10+dd%16);
+	LCD_DisableGraphics();
+	return 0;
 }
 /**************************************layer 2: main menu [Set time] "Set alarm" "Set hour" "Set backlight"***************************************/
 unsigned char MainMenuSetTime(unsigned char key_up, unsigned char key_down, unsigned char key_enter)

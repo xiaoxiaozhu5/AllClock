@@ -2,6 +2,7 @@
 #define __FUN_H__
 
 unsigned char MainScreen(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
+unsigned char MainScreenCalender(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
 unsigned char MainMenuSetTime(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
 unsigned char MainMenuSetAlarm(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
 unsigned char MainMenuSetHourBeep(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
@@ -16,5 +17,6 @@ unsigned char SubMenuSetBacklightAuto(unsigned char key_up, unsigned char key_do
 unsigned char SubMenuSetBacklightManual(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
 unsigned char SubMenuDoSetBacklightAuto(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
 unsigned char SubMenuDoSetBacklightManual(unsigned char key_up, unsigned char key_down, unsigned char key_enter);
+
 
 #endif

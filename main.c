@@ -32,7 +32,7 @@ typedef struct
 } key_table;
 key_table code table[]=
 {
-    {0,0,0,1,0,(*MainScreen)},//layer 1: show main screen
+    {0,15,15,1,0,(*MainScreen)},//layer 1: show main screen
 	{1,4,2,5,0,(*MainMenuSetTime)},//layer 2: main menu
 	{2,1,3,6,0,(*MainMenuSetAlarm)},//layer 2: main menu
 	{3,2,4,10,0,(*MainMenuSetHourBeep)},//layer 2: main menu
@@ -47,6 +47,7 @@ key_table code table[]=
 	{12,11,11,14,4,(*SubMenuSetBacklightManual)},//layer 6: backlight
 	{13,13,13,13,11,(*SubMenuDoSetBacklightAuto)},//layer 6: backlight
 	{14,14,14,14,12,(*SubMenuDoSetBacklightManual)},//layer 6: backlight
+	{15,0,0,1,0,(*MainScreenCalender)},//layer 1: show main screen 2
 };
 
 void main()
