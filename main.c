@@ -105,6 +105,7 @@ void main()
 		{
 			current_operation=table[func_index].current_operation;
 			ret = (*current_operation)(0,0,0);
+			last_func_index = func_index;
 		}
 		else
 		{
