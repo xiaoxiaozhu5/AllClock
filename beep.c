@@ -7,7 +7,7 @@ sbit beep	=	P1 ^ 0;
 
 void Beep(void)
 { 
-	unsigned char a;
+	unsigned char a = 0;
 	for(a=60;a>0;a--)
 	{
 		beep = ~beep;
@@ -28,7 +28,7 @@ void Beep(void)
 
 void Beep_set(void)
 {
-	unsigned char a;
+	unsigned char a = 0;
 	for(a=50;a>0;a--)
 	{
 		beep = ~beep;
@@ -49,7 +49,7 @@ void Beep_set(void)
 
 void Beep_bs(void)
 {
-	unsigned char a;
+	unsigned char a = 0;
 	for(a=150;a>0;a--)
 	{
 		beep = ~beep;
@@ -78,7 +78,7 @@ void Beep_bs(void)
 
 void Beep_key(void)
 {
-	unsigned char a;
+	unsigned char a = 0;
 	for(a=100;a>0;a--)
 	{
 		beep = ~beep;
@@ -89,7 +89,7 @@ void Beep_key(void)
 
 void Beep_al(void)
 {
-	unsigned int a;
+	unsigned int a = 0;
 	for(a=2500;a>0;a--)
 	{
 		beep = ~beep;

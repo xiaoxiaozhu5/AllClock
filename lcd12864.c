@@ -15,7 +15,7 @@ sbit	SCLK  		=	P3 ^ 3;
 
 void lcm_w_byte(unsigned char bbyte)
 {
-	unsigned char i;
+	unsigned char i = 0;
     for(i=0;i<8;i++){
         SID=bbyte&0x80;
         SCLK=1;
@@ -26,7 +26,7 @@ void lcm_w_byte(unsigned char bbyte)
 
 void lcm_w_test(bit start, unsigned char ddata)
 {
-	unsigned char start_data,Hdata,Ldata;
+	unsigned char start_data = 0,Hdata = 0,Ldata = 0;
     if(start==0){
 		start_data=0xf8;	 //0:command
     }else{
@@ -46,24 +46,6 @@ void lcm_clr(void)
 {
 	lcm_w_test(0,0x01);
 	DELAY_MS(20);
-}
-
-void lcm_clr_up(void)
-{
-	unsigned char row = 0;
-	unsigned char col = 0;
-	lcm_w_test(0, 0x36);  
-	for(row = 0; row < 64; row++)     
-	{
-		lcm_w_test(0, 0x80 + ((row / 32) ? (row - 32) : row));     
-		lcm_w_test(0, (row / 32) ? 0x88 : 0x80);      	
-																		
-		for(col = 0; col < 16; col++)      				
-		{           
-			lcm_w_test(1, 0);
-		} 
-	} 
-	lcm_w_test(0, 0x30);  
 }
 
 void lcm_w_word(unsigned char *str)
@@ -136,7 +118,7 @@ void wr_address(void)
 void White_Line_Init();
 void reverse_show(uchar addr_x ,uchar addr_y ,uchar num)
 {
-    uchar j , k ;
+    uchar j = 0 , k = 0;
     LCD_X = addr_x ;
     LCD_Y = addr_y ;
     White_Line_Init();
@@ -181,58 +163,11 @@ void White_Line_Init()
     lcm_w_test(0,0x36);                        //enter extend basic, turn on display
 }
 
-//x(0-3),y(0-7),width:num
-void White_Line(uchar x,uchar y,uchar width)
-{
-    unsigned char i,j,flag=0x00;
-
-    White_Line_Init();
-
-    if(x>1)
-    {
-        flag=0x08;
-        x=x-2;
-    }
-    lcm_w_test(0,0x34);
-    for(i=0;i<16;i++)
-    {
-        lcm_w_test(0,0x80+(x<<4)+i);
-        lcm_w_test(0,0x80+flag+y);
-        for(j=0;j<width;j++)
-        {
-            lcm_w_test(1,0xff);
-            delay(1);
-            lcm_w_test(1,0xff);
-            delay(1);
-        }
-    }
-    lcm_w_test(0,0x36);
-    lcm_w_test(0,0x30);                        //exit extend basic, enter basic
-}
-
-void flash(void)
-{
-	lcm_w_test(0,0x08) ; //turn off display
-	DELAY_MS(250) ;
-	lcm_w_test(0,0x0c) ; //turn on display, turn off cursor, no flashing
-	DELAY_MS(250) ;
-}
-
-void flow(void)
-{
-	uchar i;
-	for(i = 0; i < 8; i++)
-	{
-		lcm_w_test(0,0x1c);//turn on display shift, left to right
-		DELAY_MS(250);
-	}
-}
-
 void LCD_EnableGraphics(void)
 {
-	lcm_w_test(0,0x20);		
+	lcm_w_test(0,0x20);
 	DELAY_MS(1);
-	lcm_w_test(0,0x24);			// Switch to extended instruction mode.	
+	lcm_w_test(0,0x24);			// Switch to extended instruction mode.
 	DELAY_MS(1);
 	lcm_w_test(0,0x26);			// Enable graphics mode.
 	DELAY_MS(1);
@@ -270,7 +205,7 @@ void LCD_FillScreenGraphics(const unsigned char* graphic)
 				lcm_w_test(1,graphic[2*x+1 + 16*y]);
 			}
 		}
-		
+
 	}
 }
 */
@@ -302,18 +237,18 @@ void LCD_GraphicsDisplayString(unsigned char line, char* str)
 			shouldContinue = 0;
 		}
 
-		// if string length is odd, last letter does not come in pair, append space			
+		// if string length is odd, last letter does not come in pair, append space
 		letterB = *str++;
-		if (letterB == 0) 
+		if (letterB == 0)
 		{
-			letterB = 32; // odd number of characters in a string, replace NULL with space		
+			letterB = 32; // odd number of characters in a string, replace NULL with space
 			shouldContinue = 0;
 		}
 
 		indA = letterA < 0x52 ? letterA - 0x20 : letterA - 0x52;
 		indB = letterB < 0x52 ? letterB - 0x20 : letterB - 0x52;
-		
-	
+
+
 	    if(letterA < 0x52){
 			colListA[4] = Alpha1[(indA*5)];
 			colListA[3] = Alpha1[(indA*5)+1];
@@ -329,7 +264,7 @@ void LCD_GraphicsDisplayString(unsigned char line, char* str)
 			colListA[1] = Alpha2[(indA*5)+3];
 			colListA[0] = Alpha2[(indA*5)+4];
 		}
-	
+
 	    if(letterB < 0x52){
 			colListB[4] = Alpha1[(indB*5)];
 			colListB[3] = Alpha1[(indB*5)+1];
@@ -358,7 +293,7 @@ void LCD_GraphicsDisplayString(unsigned char line, char* str)
 				lcm_w_test(0,0x80 | ( (line-4) * 8 + row));
 				lcm_w_test(0,0x88 | count);
 			}
-					
+
 			dataA = 0x00;
 			for (colInd=0;colInd<5;colInd++)
 			{
@@ -376,7 +311,7 @@ void LCD_GraphicsDisplayString(unsigned char line, char* str)
 					dataB = dataB | (1 << (colInd+3));
 				}
 			}
-	
+
 			lcm_w_test(1,dataA);
 			lcm_w_test(1,dataB);
 		}
@@ -386,11 +321,13 @@ void LCD_GraphicsDisplayString(unsigned char line, char* str)
 }
 */
 
+unsigned char xdata mapa[16][32][2] = {0};
+
 void LCD_ClearGraphics(void)
 {
 	// This function performs similar to the LCD_FillScreenGraphics but
 	// only zeros are sent into the screen instead of data from an array.
-	unsigned char x, y;
+	unsigned char x = 0, y = 0;
 	for(y = 0; y < 64; y++)
 	{
 		if(y < 32)
@@ -409,16 +346,23 @@ void LCD_ClearGraphics(void)
 			lcm_w_test(1,0x00);
 		}
 	}
-}
 
-unsigned char xdata mapa[16][32][2] = {0};
+    for(y = 0; y < 32; ++y)
+    {
+        for(x = 0; x < 16; ++x)
+        {
+            mapa[x][y][0] = 0;
+            mapa[x][y][1] = 0;
+        }
+    }
+}
 
 //1-point display / deletion / inversion at posX coordinates (0 to 127) and posY (0 to 63)
 void plot(uchar posX, uchar posY, uchar style) {
 	uchar horiz = 0;
 	uchar minibit = 0;
 	uchar originalLeftByte = 0, originalRightByte = 0;
-	uchar leftByte, rightByte;
+	uchar leftByte = 0, rightByte = 0;
     if (posX > 127) posX = 127;
     else if (posX < 0) posX = 0;
     if (posY > 63) posY = 63;
@@ -430,30 +374,30 @@ void plot(uchar posX, uchar posY, uchar style) {
         horiz += 8;
     }
 
-    minibit = posX & 15; 
+    minibit = posX & 15;
 
 	lcm_w_test(0, 0x80 + posY);
 	lcm_w_test(0, 0x80 + horiz);
 
     originalLeftByte = mapa[horiz][posY][0];
-    originalRightByte = mapa[horiz][posY][1];  
-    
+    originalRightByte = mapa[horiz][posY][1];
+
     if (minibit < 8) {
-        if (style == 1) { 
+        if (style == 1) {
             leftByte = (0x80 >> minibit) | originalLeftByte;
-        } else if (style == 0) { 
+        } else if (style == 0) {
             leftByte = ~(0x80 >> minibit) & originalLeftByte;
-        } else { 
+        } else {
             leftByte = (0x80 >> minibit) ^ originalLeftByte;
         }
         mapa[horiz][posY][0] = leftByte;
         rightByte = originalRightByte;
     } else {
-        if (style == 1) { 
+        if (style == 1) {
             rightByte = (0x80 >> (minibit - 8)) | originalRightByte;
-        } else if (style == 0) {  
+        } else if (style == 0) {
             rightByte = ~(0x80 >> (minibit - 8)) & originalRightByte;
-        } else { 
+        } else {
             rightByte = (0x80 >> (minibit - 8)) ^ originalRightByte;
         }
         mapa[horiz][posY][1] = rightByte;
@@ -465,38 +409,38 @@ void plot(uchar posX, uchar posY, uchar style) {
 
 }
 
-void printString3x5(const char* string, uchar leftX, uchar topY) 
-{    
+void printString3x5(const char* string, uchar leftX, uchar topY)
+{
     uchar actualX = leftX;
     uchar actualY = topY;
     uchar firstRun = 1;
 	uchar row = 0, column = 0;
 
-        while (*string) {
-            unsigned char charCode = (unsigned char)*string++;
-            
-            if (charCode < 32 || charCode > 126) {
-                charCode = 127;
-            }
-            
-            charCode -= 32;
+    while (*string) {
+        unsigned char charCode = (unsigned char)*string++;
 
-            if (!firstRun) {
-                for (row = 0; row < 5; ++row) {
-                    plot(actualX, actualY + row, 0);
-                }
-                actualX += 1;
-            } else {
-                firstRun = 0;
-            }
-
-            for (column = 0; column < CHAR_HEIGHT; ++column) {
-                for (row = 0; row < CHAR_WIDTH; ++row) {
-					plot(actualX, actualY + row, char3x5[charCode][column][row]);
-                }
-                actualX += 1;
-            }
+        if (charCode < 32 || charCode > 126) {
+            charCode = 127;
         }
+
+        charCode -= 32;
+
+        if (!firstRun) {
+            for (row = 0; row < 5; ++row) {
+                plot(actualX, actualY + row, 0);
+            }
+            actualX += 1;
+        } else {
+            firstRun = 0;
+        }
+
+        for (column = 0; column < CHAR_HEIGHT; ++column) {
+            for (row = 0; row < CHAR_WIDTH; ++row) {
+                plot(actualX, actualY + row, char3x5[charCode][column][row]);
+            }
+            actualX += 1;
+        }
+    }
 }
 
 void drawHorizontalLine(uchar posY, uchar fromByte, uchar toByte, uchar pattern) {
@@ -513,7 +457,77 @@ void drawHorizontalLine(uchar posY, uchar fromByte, uchar toByte, uchar pattern)
     for (r = 0; r <= toByte - fromByte; r++) {
 		lcm_w_test(1, pattern);
 		lcm_w_test(1, pattern);
-        mapa[shift + r][posY][0] = pattern;
-        mapa[shift + r][posY][1] = pattern;
+    }
+}
+
+void drawHorizontalLine2(uchar posY, uchar fromByte/*0*/, uchar toByte/*127*/, uchar pattern) reentrant
+{
+	uchar posX = 0;
+	for(posX = fromByte; posX < toByte + 1; ++posX)
+	{
+		plot(posX, posY, pattern);
+	}
+}
+
+void drawVerticalLine(uchar posX, uchar fromY, uchar toY, uchar style, uchar pattern) reentrant
+{
+    uchar bitSelector = 0;
+    uchar pixelStyle = style;
+	uchar posY = 0;
+
+    for (posY = fromY; posY <= toY; posY++) {
+        if (pattern != 255) {
+            int bitValue = pattern & (0x80 >> (bitSelector % 8));
+            if (bitValue == 0) {
+                pixelStyle = 0;
+            } else {
+                pixelStyle = 1;
+            }
+
+            if (style == 0) {
+                pixelStyle = !pixelStyle;
+            }
+            bitSelector++;
+        }
+        plot(posX, posY, pixelStyle);
+    }
+}
+
+void drawRectangle(uchar fromX, uchar fromY, uchar toX, uchar toY, uchar fill, uchar style) reentrant
+{
+	uchar temp = 0;
+	uchar xPos = 0;
+	uchar yPos = 0;
+    // Swap if necessary to ensure fromX <= toX and fromY <= toY
+    if (fromX > toX) {
+        temp = fromX;
+        fromX = toX;
+        toX = temp;
+    }
+    if (fromY > toY) {
+        temp = fromY;
+        fromY = toY;
+        toY = temp;
+    }
+
+    // Draw the top and bottom edges
+    for (xPos = fromX; xPos <= toX; xPos++) {
+        plot(xPos, fromY, style);
+        plot(xPos, toY, style);
+    }
+
+    // Draw the left and right edges
+    for (yPos = fromY + 1; yPos < toY; yPos++) {
+        plot(fromX, yPos, style);
+        plot(toX, yPos, style);
+    }
+
+    // Fill the rectangle if fill is true
+    if (fill) {
+        for (yPos = fromY + 1; yPos < toY; yPos++) {
+            for (xPos = fromX + 1; xPos < toX; xPos++) {
+                plot(xPos, yPos, style);
+            }
+        }
     }
 }

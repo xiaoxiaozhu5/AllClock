@@ -5,6 +5,7 @@
 #include "ds1302.h"
 #include "beep.h"
 #include "backlight.h"
+#include "bigclock.h"
 
 #include "delay.h"
 #define uchar unsigned char
@@ -20,7 +21,9 @@ sbit keydown = P0^0;	 //A
 sbit KEY_4_GND = P2^0;	 //GND
 
 uchar func_index=0;
-uchar (*current_operation)(uchar key_up, uchar key_down, uchar key_enter);
+//typedef uchar (*func_operation)(uchar key_up, uchar key_down, uchar key_enter);
+//func_operation g_current_func = 0;
+uchar (*func_operation)(uchar key_up, uchar key_down, uchar key_enter) = 0;
 typedef struct
 {
 	uchar current;
@@ -28,11 +31,12 @@ typedef struct
 	uchar down;//down index
 	uchar enter;//confirm index
 	uchar back;//return index
+	//func_operation current_operation;
     uchar (*current_operation)(uchar key_up, uchar key_down, uchar key_enter);
 } key_table;
 key_table code table[]=
 {
-    {0,15,15,1,0,(*MainScreen)},//layer 1: show main screen
+    {0,16,15,1,0,(*MainScreen)},//layer 1: show main screen
 	{1,4,2,5,0,(*MainMenuSetTime)},//layer 2: main menu
 	{2,1,3,6,0,(*MainMenuSetAlarm)},//layer 2: main menu
 	{3,2,4,10,0,(*MainMenuSetHourBeep)},//layer 2: main menu
@@ -47,7 +51,8 @@ key_table code table[]=
 	{12,11,11,14,4,(*SubMenuSetBacklightManual)},//layer 6: backlight
 	{13,13,13,13,11,(*SubMenuDoSetBacklightAuto)},//layer 6: backlight
 	{14,14,14,14,12,(*SubMenuDoSetBacklightManual)},//layer 6: backlight
-	{15,0,0,1,0,(*MainScreenCalender)},//layer 1: show main screen 2
+	{15,0,16,1,0,(*MainScreenCalender)},//layer 1: show main screen 2
+	{16,15,0,1,0,(*MainScreenBigClock)},//layer 1: show main screen 3
 };
 
 void main()
@@ -70,6 +75,8 @@ void main()
 	Init_1302();
 	lcm_init();
 	PWM1_set(180);
+	big_clock_init();
+
     while(1)
     {
 		if((keyup==0)||(keydown==0)||(keyenter==0)||(keyback==0))
@@ -103,8 +110,8 @@ void main()
 
 		if(func_index == 0)
 		{
-			current_operation=table[func_index].current_operation;
-			ret = (*current_operation)(0,0,0);
+			func_operation=table[func_index].current_operation;
+			ret = (*func_operation)(0,0,0);
 			last_func_index = func_index;
 		}
 		else
@@ -112,8 +119,8 @@ void main()
 			if(last_func_index != func_index)
 			{
                 lcm_clr();
-				current_operation=table[func_index].current_operation;
-				ret = (*current_operation)(0, 0, 0);
+				func_operation=table[func_index].current_operation;
+				ret = (*func_operation)(0, 0, 0);
 				last_func_index = func_index;
                 key_up = 0;
                 key_down = 0;
@@ -123,8 +130,8 @@ void main()
             {
                 if(ret != 0)
                 {
-                    current_operation=table[func_index].current_operation;
-                    ret = (*current_operation)(key_up, key_down, key_enter);
+                    func_operation=table[func_index].current_operation;
+                    ret = (*func_operation)(key_up, key_down, key_enter);
                     key_up = 0;
                     key_down = 0;
                     key_enter = 0;

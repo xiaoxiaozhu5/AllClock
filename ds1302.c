@@ -10,7 +10,7 @@ sbit a0   = ACC ^ 0;sbit a1   = ACC ^ 1;sbit a2   = ACC ^ 2;
 sbit a3   = ACC ^ 3;sbit a4   = ACC ^ 4;sbit a5   = ACC ^ 5;
 sbit a6   = ACC ^ 6;sbit a7   = ACC ^ 7;
 
-unsigned char yy,mo,dd,xq,hh,mm,ss;
+unsigned char yy = 0,mo = 0,dd = 0,xq = 0,hh = 0,mm = 0,ss = 0;
 
 void clock_out(unsigned char dd)
 {
@@ -73,7 +73,7 @@ void read_clockS(void)
 
 void Init_1302(void) //set initial datetime(2010.1.1 00:00:00 Mon)
 {
-	unsigned char f;
+	unsigned char f = 0;
 	if(read_clock(0x81) == 0x80)
 	{
 		write_clock(0x8e,0x00);//enable write

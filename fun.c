@@ -5,19 +5,21 @@
 #include "beep.h"
 #include "backlight.h"
 #include "calender.h"
+#include "bigclock.h"
 
 #include "delay.h"
 
-unsigned char g_sec;
-unsigned char v;
-bit BEEP_bit;
+unsigned char g_sec = 0;
+unsigned char v = 0;
+bit BEEP_bit = 0;
+
 extern unsigned char yy,mo,dd,xq,hh,mm,ss;
 
 unsigned char DSS (void);
 
 void update(void)
 {
-	unsigned char i,m;
+	unsigned char i = 0,m = 0;
 	read_clockS();
 	lcm_w_test(0,0x88);
 	lcm_w_word("20");
@@ -67,8 +69,8 @@ void update(void)
 
 void Set_time(unsigned char sel,unsigned char a,unsigned char up,unsigned char down)
 {
-    signed char address,item;
-    signed char max,mini;
+    signed char address = 0,item = 0;
+    signed char max = 0,mini = 0;
     lcm_w_test(0,0x83);
     lcm_w_word("Adjust");
     lcm_w_test(0,0x92);
@@ -110,17 +112,16 @@ void Set_time(unsigned char sel,unsigned char a,unsigned char up,unsigned char d
 
 void alarm_update(unsigned char index)
 {
-	unsigned char e = index;
 	lcm_w_test(0,0x8B);//mode
-	lcm_w_test(1,e+0x30);//alarm index
+	lcm_w_test(1,index+0x30);//alarm index
 	lcm_w_test(0,0x8D);//hour
-	lcm_w_test(1,read_clock(0xc3+e*6+2)/16+0x30);//hour
-	lcm_w_test(1,read_clock(0xc3+e*6+2)%16+0x30);
+	lcm_w_test(1,read_clock(0xc3+index*6+2)/16+0x30);//hour
+	lcm_w_test(1,read_clock(0xc3+index*6+2)%16+0x30);
 	lcm_w_word(":");
-	lcm_w_test(1,read_clock(0xc3+e*6+4)/16+0x30);//min
-	lcm_w_test(1,read_clock(0xc3+e*6+4)%16+0x30);
+	lcm_w_test(1,read_clock(0xc3+index*6+4)/16+0x30);//min
+	lcm_w_test(1,read_clock(0xc3+index*6+4)%16+0x30);
 	lcm_w_test(0,0x98);
-	switch (read_clock(0xc3+e*6))
+	switch (read_clock(0xc3+index*6))
 	{
 		case 0:
         lcm_w_word("Always turn off");
@@ -150,7 +151,7 @@ void alarm_update(unsigned char index)
 
 void alarm_check(void)
 {
-	unsigned char i;
+	unsigned char i = 0;
 	write_clock(0x8e,0x00);//enable write
 	for(i=1;i<7;i++)
 	{
@@ -202,7 +203,7 @@ void alarm_check(void)
 
 void hour_check(void)
 {
-	unsigned char i;
+	unsigned char i = 0;
 	if(read_clock(0x81)==0 && read_clock(0x83)==0 && read_clock(0xc7)==0)
 	{
 		i = read_clock(0x85);
@@ -271,7 +272,7 @@ void hour_check(void)
 
 void Backlight_auto_ctrl()
 {
-	unsigned char d;
+	unsigned char d = 0;
 	d = Backlight_read();
 	if(read_clock(0xc1) == 1)
     {
@@ -297,7 +298,7 @@ unsigned char MainScreen(unsigned char key_up, unsigned char key_down, unsigned 
 		g_sec = read_clock(0x81);
 		update();
 		Backlight_auto_ctrl();
-	}	
+	}
     return 0;
 }
 unsigned char MainScreenCalender(unsigned char key_up, unsigned char key_down, unsigned char key_enter)
@@ -305,6 +306,14 @@ unsigned char MainScreenCalender(unsigned char key_up, unsigned char key_down, u
 	LCD_EnableGraphics();
 	LCD_ClearGraphics();
 	show_calender(2000+(yy/16)*10+(yy%16),mo,(dd/16)*10+dd%16);
+	LCD_DisableGraphics();
+	return 0;
+}
+unsigned char MainScreenBigClock(unsigned char key_up, unsigned char key_down, unsigned char key_enter)
+{
+	LCD_EnableGraphics();
+	LCD_ClearGraphics();
+	show_big_block(hh, mm);
 	LCD_DisableGraphics();
 	return 0;
 }

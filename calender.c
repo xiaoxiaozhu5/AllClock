@@ -8,14 +8,14 @@
 #define uchar unsigned char
 
 
-void show_calender(short _year, short _month, short _day)
+void show_calender(int _year, int _month, int _day)
 {
 	short i = 0,day=0;
 	uchar line = 17;
 	uchar space_cnt = 0;
 	uchar daysInMonth = 0;
 	char tmp[10] = {0};
-	short year,month;
+	int year,month;
 	signed long int startingDay,dayOfWeek;
 
     year = _year;
