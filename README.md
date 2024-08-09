@@ -15,3 +15,6 @@ https://github.com/user-attachments/assets/13525dd6-ce8c-4c08-8843-d775653878ed
 
 ## Hardware
 STC12C5A60S2+LCD12864(ST7920)+DS1302+18B20+Beep
+
+## Schematic
+![image](https://github.com/xiaoxiaozhu5/AllClock/blob/4dff4fc4e0db174760ebd057872f03e36a8657fa/FT4_SCH.jpg)
